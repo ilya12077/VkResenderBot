@@ -1,5 +1,6 @@
 import html
 import json
+import logging
 import os
 
 import requests
@@ -13,7 +14,7 @@ load_dotenv(find_dotenv())
 url = os.environ.get('URL')
 group_id_tg = os.environ.get('GROUP_ID_TG')
 peer_id_vk = os.environ.get('PEER_ID_VK')
-print(url)
+logging.info(url)
 if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
     path = '/etc/vkresender/'
 else:
@@ -71,6 +72,7 @@ def pin_message_tg(chat_id: int | str, message_id: int | str):
 def main():
     r = request.get_json()
     print(r)
+    logging.info(r)
     if r['type'] == 'message_new':
         if r['object']['message']['peer_id'] == peer_id_vk and r['object']['message']['from_id'] in allowed_ids_vk:
             from_id = str(r['object']['message']['from_id'])
