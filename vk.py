@@ -12,8 +12,8 @@ app = Flask(__name__)
 
 load_dotenv(find_dotenv())
 url = os.environ.get('URL')
-group_id_tg = os.environ.get('GROUP_ID_TG')
-peer_id_vk = os.environ.get('PEER_ID_VK')
+group_id_tg = int(os.environ.get('GROUP_ID_TG'))
+peer_id_vk = int(os.environ.get('PEER_ID_VK'))
 logging.info(url)
 if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
     path = '/etc/vkresender/'
