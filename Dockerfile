@@ -8,7 +8,7 @@ RUN apt-get install -y git
 
 
 # Clone the conf files into the docker container
-RUN git clone git@github.com:ilya12077/VkResenderBot.git
+RUN git clone https://github.com/ilya12077/VkResenderBot.git
 	
 	
 RUN cp -a ./VkResenderBot/. /etc/vkresender/
