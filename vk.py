@@ -78,10 +78,10 @@ def main():
                 print(action_type)  # доделать
             else:
                 dop_att_flag = False
-                if r['object']['message']['text'] != '':
-                    pin = True
-                else:
+                if r['object']['message']['text'] == '' or from_id == '-219690041':
                     pin = False
+                else:
+                    pin = True
                 send_message_tg(group_id_tg, f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
                 if r['object']['message']['attachments']:
                     for att in r['object']['message']['attachments']:
