@@ -75,7 +75,7 @@ def main():
             from_id = str(r['object']['message']['from_id'])
             if 'action' in r['object']['message']:
                 action_type = r['object']['message']['action']['type']
-                print(action_type)  # доделать
+                print(action_type)
             else:
                 dop_att_flag = False
                 if r['object']['message']['text'] == '' or from_id == '-219690041':
