@@ -11,8 +11,37 @@ app = Flask(__name__)
 
 load_dotenv(find_dotenv())
 url = os.environ.get('URL')
-group_id_tg = int(os.environ.get('GROUP_ID_TG'))
-peer_id_vk = int(os.environ.get('PEER_ID_VK'))
+group_id_tg = []
+peer_id_vk = []
+# Инициализируем пустые списки для хранения значений
+group_ids_tg = []
+peer_ids_vk = []
+
+# Считываем переменные окружения, начинающиеся с 'GROUP_ID_TG_'
+group_id_tg_keys = [key for key in os.environ.keys() if key.startswith('GROUP_ID_TG_')]
+for key in group_id_tg_keys:
+    value = int(os.environ.get(key))
+    if value:
+        group_ids_tg.append(value)
+
+# Считываем переменные окружения, начинающиеся с 'PEER_ID_VK_'
+peer_id_vk_keys = [key for key in os.environ.keys() if key.startswith('PEER_ID_VK_')]
+for key in peer_id_vk_keys:
+    value = int(os.environ.get(key))
+    if value:
+        peer_ids_vk.append(value)
+
+# Проверка на равенство длины массивов
+if len(group_ids_tg) != len(peer_ids_vk):
+    print("Ошибка: количество элементов в массивах GROUP_ID_TG и PEER_ID_VK не совпадает.")
+    exit(1)
+
+# Отладочные выводы
+print(f"URL: {url}")
+print(f"GROUP_ID_TG: {group_ids_tg}")
+print(f"PEER_ID_VK: {peer_ids_vk}")
+
+
 if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
     path = '/etc/vkresender/'
 else:
@@ -41,7 +70,7 @@ def send_doc_tg(chat_id: int | str, doc_url: str, dop_att_flag=False):
     if r.status_code == 400:
         print('док не отправился')
         if not dop_att_flag:
-            send_message_tg(group_id_tg, '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
+            send_message_tg(chat_id, '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
 
 
 def send_message_tg(chat_id: int | str, message: str, pin_message: bool = False):
@@ -71,7 +100,8 @@ def main():
     r = request.get_json()
     print(r)
     if r['type'] == 'message_new':
-        if r['object']['message']['peer_id'] == peer_id_vk and r['object']['message']['from_id'] in allowed_ids_vk:
+        if r['object']['message']['peer_id'] == any(peer_id_vk) and r['object']['message']['from_id'] in allowed_ids_vk:
+            print('прошел')
             from_id = str(r['object']['message']['from_id'])
             if 'action' in r['object']['message']:
                 action_type = r['object']['message']['action']['type']
@@ -103,6 +133,7 @@ def main():
                         dop_att_flag = True
                 if dop_att_flag:
                     send_message_tg(group_id_tg, '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
+        else: print('не прошел')
     return 'ok'
 
 
