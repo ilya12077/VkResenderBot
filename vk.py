@@ -39,7 +39,6 @@ print(f"URL: {url}")
 print(f"GROUP_ID_TG: {group_ids_tg}")
 print(f"PEER_ID_VK: {peer_ids_vk}")
 
-
 if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
     path = '/etc/vkresender/'
 else:
@@ -97,8 +96,8 @@ def pin_message_tg(chat_id: int | str, message_id: int | str):
 def main():
     r = request.get_json()
     print(r)
-    if r['type'] == 'message_new':
-        if any(peer_ids_vk == r['object']['message']['peer_id']) and r['object']['message']['from_id'] in allowed_ids_vk:
+    if 'type' in r and r['type'] == 'message_new':
+        if any(peer_id == r['object']['message']['peer_id'] for peer_id in peer_ids_vk) and r['object']['message']['from_id'] in allowed_ids_vk:
             print('прошел')
             from_id = str(r['object']['message']['from_id'])
             if 'action' in r['object']['message']:
@@ -110,7 +109,9 @@ def main():
                     pin = True
                 else:
                     pin = False
-                send_message_tg(r['object']['message']['peer_id'], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
+                for tgid in names[from_id]['related_tg_groups']:
+                    print(tgid)
+                    send_message_tg(group_ids_tg[tgid-1], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
                 if r['object']['message']['attachments']:
                     for att in r['object']['message']['attachments']:
                         if att['type'] == 'photo':
@@ -131,7 +132,8 @@ def main():
                         dop_att_flag = True
                 if dop_att_flag:
                     send_message_tg(r['object']['message']['peer_id'], '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
-        else: print('не прошел')
+        else:
+            print('не прошел')
     return 'ok'
 
 
