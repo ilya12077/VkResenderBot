@@ -11,8 +11,6 @@ app = Flask(__name__)
 
 load_dotenv(find_dotenv())
 url = os.environ.get('URL')
-group_id_tg = []
-peer_id_vk = []
 # Инициализируем пустые списки для хранения значений
 group_ids_tg = []
 peer_ids_vk = []
@@ -100,7 +98,7 @@ def main():
     r = request.get_json()
     print(r)
     if r['type'] == 'message_new':
-        if r['object']['message']['peer_id'] == any(peer_id_vk) and r['object']['message']['from_id'] in allowed_ids_vk:
+        if any(peer_ids_vk == r['object']['message']['peer_id']) and r['object']['message']['from_id'] in allowed_ids_vk:
             print('прошел')
             from_id = str(r['object']['message']['from_id'])
             if 'action' in r['object']['message']:
@@ -109,10 +107,10 @@ def main():
             else:
                 dop_att_flag = False
                 if r['object']['message']['text'] == '' or from_id == '-219690041':
-                    pin = False
+                    pin = True
                 else:
                     pin = False
-                send_message_tg(group_id_tg, f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
+                send_message_tg(r['object']['message']['peer_id'], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
                 if r['object']['message']['attachments']:
                     for att in r['object']['message']['attachments']:
                         if att['type'] == 'photo':
@@ -120,9 +118,9 @@ def main():
                             for count, size in enumerate(att['photo']['sizes']):
                                 if size['height'] > max_size[0]:
                                     max_size = [size['height'], att['photo']['sizes'][count]['url']]
-                            send_photo_tg(group_id_tg, max_size[1])
+                            send_photo_tg(r['object']['message']['peer_id'], max_size[1])
                         elif att['type'] == 'doc':
-                            send_doc_tg(group_id_tg, att['doc']['url'])
+                            send_doc_tg(r['object']['message']['peer_id'], att['doc']['url'])
                         else:
                             dop_att_flag = True
                 if 'fwd_messages' in r['object']['message']:
@@ -132,7 +130,7 @@ def main():
                     if r['object']['message']['reply_message']:
                         dop_att_flag = True
                 if dop_att_flag:
-                    send_message_tg(group_id_tg, '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
+                    send_message_tg(r['object']['message']['peer_id'], '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
         else: print('не прошел')
     return 'ok'
 
