@@ -109,9 +109,7 @@ def main():
                     pin = True
                 else:
                     pin = False
-                for tgid in names[from_id]['related_tg_groups']:
-                    print(tgid)
-                    send_message_tg(group_ids_tg[tgid-1], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
+                send_message_tg(group_ids_vk[group_ids_tg.index(r['object']['message']['peer_id'])], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
                 if r['object']['message']['attachments']:
                     for att in r['object']['message']['attachments']:
                         if att['type'] == 'photo':
@@ -131,7 +129,7 @@ def main():
                     if r['object']['message']['reply_message']:
                         dop_att_flag = True
                 if dop_att_flag:
-                    send_message_tg(r['object']['message']['peer_id'], '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
+                    send_message_tg(group_ids_tg[group_ids_vk.index(r['object']['message']['peer_id'])], '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
         else:
             print('не прошел')
     return 'ok'
