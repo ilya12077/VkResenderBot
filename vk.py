@@ -70,13 +70,15 @@ def send_doc_tg(chat_id: int | str, doc_url: str, dop_att_flag=False):
             send_message_tg(chat_id, '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
 
 
-def send_message_tg(chat_id: int | str, message: str, pin_message: bool = False):
+def send_message_tg(chat_id: int | str, message: str, pin_message: bool = False, message_thread_id: int = 3):
     send_body = {
         'chat_id': chat_id,
         'text': message,
+        'message_thread_id': message_thread_id,
         'parse_mode': 'HTML'
     }
     r = requests.post(url + 'sendMessage', json=send_body)
+    print(r.content)
     if r.status_code == 400:
         send_message_tg(chat_id, html.escape(message))
     if pin_message:
