@@ -78,7 +78,7 @@ def send_message_tg(chat_id: int | str, message: str, pin_message: bool = False,
         'parse_mode': 'HTML'
     }
     r = requests.post(url + 'sendMessage', json=send_body)
-    print(r.content)
+    #print("sending" + r.content)
     if r.status_code == 400:
         send_message_tg(chat_id, html.escape(message))
     if pin_message:
