@@ -78,7 +78,7 @@ def send_message_tg(chat_id: int | str, message: str, pin_message: bool = False,
         'parse_mode': 'HTML'
     }
     r = requests.post(url + 'sendMessage', json=send_body)
-    #print("sending" + r.content)
+    # print(r.content)
     if r.status_code == 400:
         send_message_tg(chat_id, html.escape(message))
     if pin_message:
@@ -107,11 +107,11 @@ def main():
                 print(action_type)
             else:
                 dop_att_flag = False
-                if r['object']['message']['text'] == '' or from_id == '-219690041':
-                    pin = True
+                text = r['object']['message']['text']
+                if text == '' or from_id == '-219690041':
+                    pin = False
                 else:
                     pin = False
-                send_message_tg(group_ids_tg[peer_ids_vk.index(r['object']['message']['peer_id'])], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{r['object']['message']['text']}", pin)
                 if r['object']['message']['attachments']:
                     for att in r['object']['message']['attachments']:
                         if att['type'] == 'photo':
@@ -125,11 +125,13 @@ def main():
                         else:
                             dop_att_flag = True
                 if 'fwd_messages' in r['object']['message']:
-                    if r['object']['message']['fwd_messages']:
+                    if r['object']['message']['fwd_messages'][0]['text']:
                         dop_att_flag = True
+                        text = "↘️<i>Переслано</i>\n" + r['object']['message']['fwd_messages'][0]['text']
                 if 'reply_message' in r['object']['message']:
                     if r['object']['message']['reply_message']:
                         dop_att_flag = True
+                send_message_tg(group_ids_tg[peer_ids_vk.index(r['object']['message']['peer_id'])], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{text}", pin)
                 if dop_att_flag:
                     send_message_tg(group_ids_tg[peer_ids_vk.index(r['object']['message']['peer_id'])], '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
         else:
