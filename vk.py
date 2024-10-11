@@ -125,7 +125,7 @@ def main():
                         else:
                             dop_att_flag = True
                 if 'fwd_messages' in r['object']['message']:
-                    if r['object']['message']['fwd_messages'][0]['text']:
+                    if r['object']['message']['fwd_messages']: # F = лист не пустой 
                         dop_att_flag = True
                         text = "↘️<i>Переслано</i>\n" + r['object']['message']['fwd_messages'][0]['text']
                 if 'reply_message' in r['object']['message']:
