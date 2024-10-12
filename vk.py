@@ -132,8 +132,8 @@ def main():
                     if r['object']['message']['reply_message']:
                         dop_att_flag = True
                 send_message_tg(group_ids_tg[peer_ids_vk.index(r['object']['message']['peer_id'])], f"{names[from_id]['name']} | {names[from_id]['role']}:\n{text}", pin)
-                if dop_att_flag:
-                    send_message_tg(group_ids_tg[peer_ids_vk.index(r['object']['message']['peer_id'])], '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
+               # if dop_att_flag:
+               #     send_message_tg(group_ids_tg[peer_ids_vk.index(r['object']['message']['peer_id'])], '⬆️Есть доп. вложения (например опрос). Посмотрите его в вк')
         else:
             print('не прошел')
     return 'ok'
